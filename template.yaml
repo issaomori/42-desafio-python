@@ -41,6 +41,23 @@ Resources:
           Properties:
             Path: /hello
             Method: patch
+  ActionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "created_dt"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+        - AttributeName: "created_dt"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      TableName: "Actions"
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
