@@ -114,9 +114,11 @@ def update_patch23343():
     }, 200
 
 # --------------------------- C O N F I G -----------------------------------
+# Onde criamos as rotas e a API
 def lambda_handler(event, context):
     return app.resolve(event, context)
 
+# Função auxiliar que configura o boto3 em interação com o DynamoDB
 def dynamo_table():
     table_name = os.environ.get("TABLE", "Actions")
     region = os.environ.get("REGION", "us-east-1")
