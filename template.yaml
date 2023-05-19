@@ -12,34 +12,39 @@ Globals:
     MemorySize: 128
 
 Resources:
-  HelloWorldFunction:
+  CarFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
-      CodeUri: hello_world/
+      CodeUri: crud_api/
       Handler: app.lambda_handler
       Runtime: python3.8
       Architectures:
         - x86_64
       Events:
-        HelloWorld1:
+        GetAll:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /crud
             Method: get
-        HelloWorld:
+        GetItem:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /crud/{id}
+            Method: get
+        PostItem:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /crud
             Method: post
-        HelloWorld2:
+        DeleteItem:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /crud/{id}
             Method: delete
-        HelloWorld3:
+        PatchItem:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /hello
+            Path: /crud
             Method: patch
   ActionsTable:
     Type: AWS::DynamoDB::Table
@@ -59,12 +64,12 @@ Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+  CarApi:
+    Description: "API Gateway endpoint URL for Prod stage for Car function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/crud/"
+  CarFunction:
+    Description: "Car Lambda Function ARN"
+    Value: !GetAtt CarFunction.Arn
+  CarFunctionIamRole:
+    Description: "Implicit IAM Role created for Car function"
+    Value: !GetAtt CarFunctionRole.Arn

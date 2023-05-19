@@ -12,13 +12,11 @@ from aws_lambda_powertools.event_handler import APIGatewayRestResolver
 app = APIGatewayRestResolver()
 
 # decorator
-# --------------------------- P O S T ---------------------------------------
-# Salva no banco de dados um item com seus atributos
 @app.post("/crud")
-def simple_post5442563():
+def simple_post():
     post_data: dict = app.current_event.json_body
     carro = {
-        "id": str(uuid.uuid4()), #id aleatório gerado pela função uuid4 (esse id comporá a chave única do item)
+        "id": str(uuid.uuid4()),
         "modelo": post_data['modelo'],
         "marca": post_data['marca'],
         "ano": post_data['ano']
@@ -31,10 +29,11 @@ def simple_post5442563():
         "message": "Item successfully created in the DynamoDB!"
     }, 
 
-# --------------------------- G E T    A L L -----------------------------------
-# Exibe todos itens do banco de dados e seus atributos
+# exibe as características dos carros 
 @app.get("/crud")
-def get_all_data436434():
+def get_all_data():
+    # lendo pessoa do banco de dados usando o nome "a5eec909-e759-4526-875f-56b3bb1fafe8"
+    # lendo todo os itens do banco de dados
     db_response = dynamo_table().scan()
 
     return {
@@ -43,10 +42,9 @@ def get_all_data436434():
         "message": "Successfully read DynamoDB!"
     }, 200
 
-# --------------------------- G E T    I T E M ---------------------------------
-# procura e exibe os atributos um item baseado no id passado por parâmetro na URL
 @app.get("/crud/<id>") # recebendo id por parâmetro
-def get_id34534(id: str):
+def get_id(id: str):
+    # lendo carro do banco de dados filtrando por id "a5eec909-e759-4526-875f-56b3bb1fafe8"
     var = "0"
     if (id):
         var = id
@@ -65,10 +63,9 @@ def get_id34534(id: str):
         "message": "Successfully read DynamoDB!"
     }, 200
 
-# --------------------------- D E L E T E -----------------------------------
-# deletar o item e todos os seus atributos de uma vez
+    # deletar o item e todos os seus atributos de uma vez
 @ app.delete("/crud/<id>")
-def delete_item53543(id: str):
+def delete_item(id: str):
     db_response = dynamo_table().delete_item(
         Key={
             'id': id
@@ -80,10 +77,11 @@ def delete_item53543(id: str):
         "message": "Successfully deleted item in DynamoDB!"
     }, 200
 
-# --------------------------- U P D A T E-----------------------------------
-# atualiza um item e todos os seus atributos de uma vez, se o ID não existir, cria-se o item já atualizado
+
+
+
 @ app.patch("/crud")
-def update_patch23343():
+def update_patch():
     post_data: dict = app.current_event.json_body
     carro = {
         "id": post_data['id'],
@@ -113,20 +111,19 @@ def update_patch23343():
         "message": "Items successfully updated in the DynamoDB!"
     }, 200
 
-# --------------------------- C O N F I G -----------------------------------
 def lambda_handler(event, context):
     return app.resolve(event, context)
 
 def dynamo_table():
     table_name = os.environ.get("TABLE", "Actions")
     region = os.environ.get("REGION", "us-east-1")
-    aws_environment = os.environ.get("AWS_SAM_LOCAL", "AWS")
-    # actions_table = boto3.resource(
-        # "dynamodb", endpoint_url="http://host.docker.internal:4566")
-    if aws_environment == "AWS_SAM_LOCAL":
-        actions_table = boto3.resource("dynamodb", endpoint_url="http://host.docker.internal:4566")
-    else:
-        actions_table = boto3.resource("dynamodb", region_name=region)
+    aws_environment = os.environ.get("AWSENV", "AWS")
+    actions_table = boto3.resource(
+        "dynamodb", endpoint_url="http://host.docker.internal:4566")
+    # if aws_environment == "AWS_SAM_LOCAL":
+    #     actions_table = boto3.resource("dynamodb", endpoint_url="http://host.docker.internal:4566")
+    # else:
+    #     actions_table = boto3.resource("dynamodb", region_name=region)
     return actions_table.Table(table_name)
 
 
